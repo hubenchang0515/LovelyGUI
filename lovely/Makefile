@@ -7,7 +7,7 @@ endif
 vpath %.h ./inc
 vpath %.cpp ./src
 
-CXXFLAGS = -std=c++11 -I./inc -O3 -W -Wall -Wextra -g
+CXXFLAGS = -std=c++11 -I./inc -O3 -W -Wall -Wextra -Wno-unused-parameter
 
 TARGET_O = Application.o Widget.o Object.o
 TARGET = libLovelyGUI.dll

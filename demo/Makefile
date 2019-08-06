@@ -7,7 +7,7 @@ endif
 vpath %.h ./inc
 vpath %.cpp ./src
 
-CXXFLAGS = -std=c++11 -I./inc -O3 -W -Wall -Wextra -I../lovely/inc -g
+CXXFLAGS = -std=c++11 -I./inc -O3 -W -Wall -Wextra -I../lovely/inc -Wno-unused-parameter
 
 TARGET_O = main.o
 TARGET = application
@@ -21,3 +21,6 @@ $(TARGET) : $(TARGET_O)
 
 main.o : main.cpp
 	g++ $(CXXFLAGS) -c main.cpp
+
+clean :
+	rm -rf $(TARGET_O)

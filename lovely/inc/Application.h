@@ -36,7 +36,7 @@ public:
     static void setWidth(int width);
     static void setHeight(int height);
     static void setTitle(const std::string& title);
-    static Widget* setRootWidget(Widget* widget);
+    static void setRootWidget(Widget* widget);
 
 private:
     static Application* _app;

@@ -168,7 +168,7 @@ void Application::setTitle(const std::string& title)
 }
 
 /* Set root widget */
-Widget* Application::setRootWidget(Widget* widget)
+void Application::setRootWidget(Widget* widget)
 {
     Application::_rootWidget = widget;
     widget->setX(0);
@@ -216,6 +216,8 @@ int Application::exec(int argc, char** argv)
         /* Present */
         SDL_RenderPresent(Application::_renderer);
     }
+
+    return 0;
 }
 
 
