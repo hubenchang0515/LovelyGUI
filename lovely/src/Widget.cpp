@@ -6,7 +6,10 @@ namespace LovelyGUI
     Widget::Widget(Widget* parent):
         Object(parent)
     {
-
+        this->_x = 0;
+        this->_y = 0;
+        this->_width = 80;
+        this->_height = 20;
     }
 
     Widget::~Widget()
@@ -54,18 +57,15 @@ namespace LovelyGUI
         this->_height = height;
     }
 
-    void Widget::paint(SDL_Renderer* renderer)
+    void Widget::paint(std::queue<Widget*>& paintQueue)
     {
-        /* Paint self */
-        this->paintEvent(renderer);
-
-        /* Paint son widgets */
+        /* Push son widgets into queue back */
         for(Object* son : _sons)
         {
             Widget* widget = dynamic_cast<Widget*>(son);
             if(widget != nullptr)
             {
-                widget->paint(renderer);
+                paintQueue.push(widget);
             }
         }
     }
@@ -95,12 +95,14 @@ namespace LovelyGUI
     void Widget::paintEvent(SDL_Renderer* renderer)
     {
         static SDL_Rect rect;
-        SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
         rect.x = this->_x;
         rect.y = this->_y;
         rect.w = this->_width;
         rect.h = this->_height;
+        SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
         SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderDrawRect(renderer, &rect);
     }
 
     bool Widget::updateEvent(const SDL_Event& event)

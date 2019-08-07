@@ -15,6 +15,7 @@ int Application::_height = 400;
 std::string Application::_title = "LovelyGUI Application";
 Widget* Application::_rootWidget = nullptr;
 bool Application::_running = false;
+std::queue<Widget*> Application::_paintQueue;
 
 
 /* Constructor */
@@ -183,6 +184,8 @@ int Application::exec(int argc, char** argv)
 {
     SDL_Event event;
     Application::_running = true;
+    Uint32 ticks = SDL_GetTicks();
+    const Uint32 deltaTicks = 1000/60;
 
     while(Application::_running)
     {
@@ -202,7 +205,14 @@ int Application::exec(int argc, char** argv)
         }
 
         /* Paint the root Widget */
-        Application::_rootWidget->paint(Application::_renderer);
+        Application::_paintQueue.push(Application::_rootWidget);
+        while(Application::_paintQueue.empty() == false)
+        {
+            Widget* current = Application::_paintQueue.front();
+            current->paintEvent(Application::_renderer);
+            current->paint(Application::_paintQueue);
+            Application::_paintQueue.pop();
+        }
 
         /* Deal all SDL event */
         while(SDL_PollEvent(&event) > 0)
@@ -215,6 +225,13 @@ int Application::exec(int argc, char** argv)
 
         /* Present */
         SDL_RenderPresent(Application::_renderer);
+
+        /* Release CPU */
+        if(SDL_GetTicks() - ticks < deltaTicks)
+        {
+            SDL_Delay(SDL_GetTicks() - ticks);
+        }
+        ticks = SDL_GetTicks();
     }
 
     return 0;

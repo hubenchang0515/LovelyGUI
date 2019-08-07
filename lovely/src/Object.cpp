@@ -6,6 +6,10 @@ namespace LovelyGUI
 Object::Object(Object* parent)
 {
     this->_parent = parent;
+    if(parent != nullptr)
+    {
+        parent->add(this);
+    }
 }
 
 Object::~Object()
@@ -21,6 +25,11 @@ Object::~Object()
     {
         this->_parent->remove(this);
     }
+}
+
+void Object::add(Object* son)
+{
+    this->_sons.insert(son);
 }
 
 void Object::remove(Object* son)

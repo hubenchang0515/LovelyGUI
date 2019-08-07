@@ -5,8 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
-
-
+#include <queue>
 
 namespace LovelyGUI
 {
@@ -46,6 +45,7 @@ private:
     static int _height;
     static std::string _title;
     static Widget* _rootWidget;
+    static std::queue<Widget*> _paintQueue;
 
     static bool _running;
     static bool update(const SDL_Event& event);

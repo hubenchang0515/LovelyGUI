@@ -13,6 +13,7 @@ public:
     virtual ~Object();
 
 protected:
+    void add(Object* son);
     void remove(Object* son);
     Object* _parent;
     std::set<Object*> _sons;

@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <queue>
 
 #include "Object.h"
 
@@ -14,6 +15,7 @@ class Application;
 
 class Widget : public Object
 {
+    friend class Application;
 public:
     Widget(Widget* parent=nullptr);
     virtual ~Widget();
@@ -27,9 +29,6 @@ public:
     int height();
     void setWidth(int width);
     void setHeight(int height);
-    
-    void paint(SDL_Renderer* renderer);
-    bool update(const SDL_Event& event);
 
 protected:
     void paintEvent(SDL_Renderer* renderer);
@@ -40,6 +39,9 @@ private:
     int _y;
     int _width;
     int _height;
+
+    void paint(std::queue<Widget*>& paintQueue);
+    bool update(const SDL_Event& event);
 };
 
 }; // namespace LovelyGUI
