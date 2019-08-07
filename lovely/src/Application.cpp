@@ -224,6 +224,7 @@ int Application::exec(int argc, char** argv)
         }
 
         /* Present */
+        SDL_SetRenderTarget(Application::_renderer, nullptr);
         SDL_RenderPresent(Application::_renderer);
 
         /* Release CPU */

@@ -31,8 +31,8 @@ public:
     void setHeight(int height);
 
 protected:
-    void paintEvent(SDL_Renderer* renderer);
-    bool updateEvent(const SDL_Event& event);
+    virtual void paintEvent(SDL_Renderer* renderer);
+    virtual bool updateEvent(const SDL_Event& event);
 
 private:
     int _x;
@@ -40,8 +40,8 @@ private:
     int _width;
     int _height;
 
-    void paint(std::queue<Widget*>& paintQueue);
-    bool update(const SDL_Event& event);
+    virtual void paint(std::queue<Widget*>& paintQueue) final;
+    virtual bool update(const SDL_Event& event) final;
 };
 
 }; // namespace LovelyGUI
