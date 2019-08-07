@@ -229,7 +229,7 @@ int Application::exec(int argc, char** argv)
         /* Release CPU */
         if(SDL_GetTicks() - ticks < deltaTicks)
         {
-            SDL_Delay(SDL_GetTicks() - ticks);
+            SDL_Delay(deltaTicks - (SDL_GetTicks() - ticks));
         }
         ticks = SDL_GetTicks();
     }
