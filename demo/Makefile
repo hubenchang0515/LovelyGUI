@@ -7,7 +7,7 @@ endif
 vpath %.h ./inc
 vpath %.cpp ./src
 
-CXXFLAGS = -std=c++11 -O3 -W -Wall -Wextra -I../lovely/inc -Wno-unused-parameter -Wno-unused-variable
+CXXFLAGS = -std=c++11 -O3 -W -Wall -Wextra -I../lovely/inc -Wno-unused-parameter -Wno-unused-variable -g
 
 TARGET_O = main.o
 TARGET = application
