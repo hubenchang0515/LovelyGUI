@@ -92,20 +92,20 @@ namespace LovelyGUI
         return false;
     }
 
-    void Widget::paintEvent(SDL_Renderer* renderer)
+    void Widget::paintEvent(Renderer* renderer)
     {
-        static SDL_Rect rect;
+        static Rect rect;
         rect.x = this->_x;
         rect.y = this->_y;
         rect.w = this->_width;
         rect.h = this->_height;
-        SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderDrawRect(renderer, &rect);
+        renderer->setColor(255, 105, 180);
+        renderer->fillRect(rect);
+        renderer->setColor(255, 255, 255);
+        renderer->fillRect(rect);
     }
 
-    bool Widget::updateEvent(const SDL_Event& event)
+    bool Widget::updateEvent(const Event& event)
     {
         return false;
     }

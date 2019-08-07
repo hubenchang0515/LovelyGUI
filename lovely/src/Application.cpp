@@ -2,20 +2,19 @@
 
 #include "Application.h"
 #include "Widget.h"
+#include "Timer.h"
 
 namespace LovelyGUI
 {
 
 /* Singleton Pattern */
 Application* Application::_app = nullptr;
-SDL_Window* Application::_window = nullptr;
-SDL_Renderer* Application::_renderer = nullptr;
-int Application::_width = 640;
-int Application::_height = 400;
-std::string Application::_title = "LovelyGUI Application";
+Window* Application::_window = nullptr;
+Renderer* Application::_renderer = nullptr;
 Widget* Application::_rootWidget = nullptr;
 bool Application::_running = false;
 std::queue<Widget*> Application::_paintQueue;
+std::set<Timer*> Application::_timers;
 
 
 /* Constructor */
@@ -55,34 +54,32 @@ Application::Application(int width, int height, const std::string& title)
     }
 
     /* Create Window */
-    Application::_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                    width, height, SDL_WINDOW_SHOWN);
-    if(Application::_window == nullptr)
+    try
+    {
+        Application::_window = new Window(width, height, title);
+    }
+    catch(const std::exception& e)
     {
         IMG_Quit();
         TTF_Quit();
         SDL_Quit();
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateWindow : %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateWindow : %s", e.what());
         throw std::runtime_error("SDL_CreateWindow Error");
     }
-    Application::_width = width;
-    Application::_height = height;
-    Application::_title = title;
 
     /* Create Renderer */
-    Application::_renderer = SDL_CreateRenderer(Application::_window, -1, SDL_RENDERER_ACCELERATED);
-    if(Application::_renderer == nullptr)
+    try
     {
-        Application::_renderer = SDL_CreateRenderer(Application::_window, -1, SDL_RENDERER_SOFTWARE);
-        if(Application::_renderer == nullptr)
-        {
-            SDL_DestroyWindow(Application::_window);
-            IMG_Quit();
-            TTF_Quit();
-            SDL_Quit();
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateRenderer : %s", SDL_GetError());
-            throw std::runtime_error("SDL_CreateRenderer Error");
-        }
+        Application::_renderer = new Renderer(Application::_window);
+    }
+    catch(const std::exception& e)
+    {
+        delete Application::_window;
+        IMG_Quit();
+        TTF_Quit();
+        SDL_Quit();
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateRenderer : %s", e.what());
+        throw std::runtime_error("SDL_CreateRenderer Error");
     }
 
     Application::_rootWidget = nullptr;
@@ -92,8 +89,8 @@ Application::Application(int width, int height, const std::string& title)
 /* Distructor */
 Application::~Application()
 {
-    SDL_DestroyRenderer(Application::_renderer);
-    SDL_DestroyWindow(Application::_window);
+    delete Application::_renderer;
+    delete Application::_window;
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
@@ -107,33 +104,15 @@ Application* Application::app()
 }
 
 /* Get SDL_Window pointer */
-SDL_Window* Application::window()
+Window* Application::window()
 {
     return Application::_window;
 }
 
 /* Get SDL_Renderer pointer */
-SDL_Renderer* Application::renderer()
+Renderer* Application::renderer()
 {
     return Application::_renderer;
-}
-
-/* Get window width */
-int Application::width()
-{
-    return Application::_width;
-}
-
-/* Get window height */
-int Application::height()
-{
-    return Application::_height;
-}
-
-/* Get window title */
-std::string Application::title()
-{
-    return Application::_title;
 }
 
 /* Get root widget */
@@ -142,42 +121,29 @@ Widget* Application::rootWidget()
     return Application::_rootWidget;
 }
 
-/* Set window width */
-void Application::setWidth(int width)
-{
-    SDL_SetWindowSize(Application::_window, width, Application::_height);
-    if(Application::_rootWidget != nullptr)
-    {
-        Application::_rootWidget->setWidth(width);
-    }
-}
-
-/* Set window height */
-void Application::setHeight(int height)
-{
-    SDL_SetWindowSize(Application::_window, Application::_width, height);
-    if(Application::_rootWidget != nullptr)
-    {
-        Application::_rootWidget->setHeight(height);
-    }
-}
-
-/* Set window title */
-void Application::setTitle(const std::string& title)
-{
-    SDL_SetWindowTitle(Application::_window, title.c_str());
-}
-
 /* Set root widget */
 void Application::setRootWidget(Widget* widget)
 {
     Application::_rootWidget = widget;
     widget->setX(0);
     widget->setY(0);
-    widget->setWidth(Application::_width);
-    widget->setHeight(Application::_height);
+    widget->setWidth(Application::_window->width());
+    widget->setHeight(Application::_window->height());
 }
 
+
+/* Add timer */
+void Application::addTimer(Timer* timer)
+{
+    Application::_timers.insert(timer);
+}
+
+
+/* Remove timer */
+void Application::removeTimer(Timer* timer)
+{
+    Application::_timers.erase(timer);
+}
 
 /* Application main loop */
 int Application::exec(int argc, char** argv)
@@ -186,13 +152,19 @@ int Application::exec(int argc, char** argv)
     Application::_running = true;
     Uint32 ticks = SDL_GetTicks();
     const Uint32 deltaTicks = 1000/60;
+    Renderer* renderer = Application::_renderer;
+    if(renderer == nullptr)
+    {
+        SDL_Log("Renderer is nullptr");
+        return 1;
+    }
 
     while(Application::_running)
     {
         /* Clear */
-        SDL_SetRenderTarget(Application::_renderer, nullptr);
-        SDL_SetRenderDrawColor(Application::_renderer, 0xff, 0xff, 0xff, 0xff);
-        SDL_RenderClear(Application::_renderer);
+        renderer->setTarget(nullptr);
+        renderer->setColor(0xff, 0xff, 0xff);
+        renderer->clear();
 
         /* Has no root Widget */
         if(Application::_rootWidget == nullptr)
@@ -209,7 +181,7 @@ int Application::exec(int argc, char** argv)
         while(Application::_paintQueue.empty() == false)
         {
             Widget* current = Application::_paintQueue.front();
-            current->paintEvent(Application::_renderer);
+            current->paintEvent(renderer);
             current->paint(Application::_paintQueue);
             Application::_paintQueue.pop();
         }
@@ -223,9 +195,15 @@ int Application::exec(int argc, char** argv)
             }
         }
 
+        /* Update timers */
+        for(Timer* timer : Application::_timers)
+        {
+            timer->update();
+        }
+
         /* Present */
-        SDL_SetRenderTarget(Application::_renderer, nullptr);
-        SDL_RenderPresent(Application::_renderer);
+        renderer->setTarget(nullptr);
+        renderer->present();
 
         /* Release CPU */
         if(SDL_GetTicks() - ticks < deltaTicks)

@@ -6,11 +6,16 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
 #include <queue>
+#include <set>
+
+#include "Window.h"
+#include "Renderer.h"
 
 namespace LovelyGUI
 {
 
 class Widget;
+class Timer;
 
 class Application
 {
@@ -22,30 +27,24 @@ public:
 
     /* Read-Only */
     static Application* app();
-    static SDL_Window* window();
-    static SDL_Renderer* renderer();
+    static Window* window();
+    static Renderer* renderer();
 
     /* Read */
-    static int width();
-    static int height();
-    static std::string title();
     static Widget* rootWidget();
 
     /* Write */
-    static void setWidth(int width);
-    static void setHeight(int height);
-    static void setTitle(const std::string& title);
     static void setRootWidget(Widget* widget);
+    static void addTimer(Timer* timer);
+    static void removeTimer(Timer* timer);
 
 private:
     static Application* _app;
-    static SDL_Window* _window;
-    static SDL_Renderer* _renderer;
-    static int _width;
-    static int _height;
-    static std::string _title;
+    static Window* _window;
+    static Renderer* _renderer;
     static Widget* _rootWidget;
     static std::queue<Widget*> _paintQueue;
+    static std::set<Timer*> _timers;
 
     static bool _running;
     static bool update(const SDL_Event& event);

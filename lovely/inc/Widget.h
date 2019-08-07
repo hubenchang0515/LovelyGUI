@@ -20,19 +20,19 @@ public:
     Widget(Widget* parent=nullptr);
     virtual ~Widget();
 
-    int x();
-    int y();
-    void setX(int x);
-    void setY(int y);
+    virtual int x();
+    virtual int y();
+    virtual void setX(int x);
+    virtual void setY(int y);
 
-    int width();
-    int height();
-    void setWidth(int width);
-    void setHeight(int height);
+    virtual int width();
+    virtual int height();
+    virtual void setWidth(int width);
+    virtual void setHeight(int height);
 
 protected:
-    virtual void paintEvent(SDL_Renderer* renderer);
-    virtual bool updateEvent(const SDL_Event& event);
+    virtual void paintEvent(Renderer* renderer);
+    virtual bool updateEvent(const Event& event);
 
 private:
     int _x;
@@ -41,7 +41,7 @@ private:
     int _height;
 
     virtual void paint(std::queue<Widget*>& paintQueue) final;
-    virtual bool update(const SDL_Event& event) final;
+    virtual bool update(const Event& event) final;
 };
 
 }; // namespace LovelyGUI
