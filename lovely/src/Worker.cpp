@@ -18,5 +18,14 @@ Worker::~Worker()
     Application::removeWorker(this);
 }
 
+void Worker::update()
+{
+
+}
+
+bool Worker::deal(const Event& event)
+{
+    return false;
+}
 
 }; // namespace LovelyGUI

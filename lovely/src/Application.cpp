@@ -166,15 +166,14 @@ int Application::exec(int argc, char** argv)
         renderer->setColor(0xff, 0xff, 0xff);
         renderer->clear();
 
-        /* Has no root Widget */
-        if(Application::_rootWidget == nullptr)
+        /* Deal Events */
+        while(SDL_PollEvent(&event) > 0)
         {
-            while(SDL_PollEvent(&event) > 0)
-            {
-                this->update(event);
-            }
-            continue;
+            this->deal(event);
         }
+
+        /* Update */
+        this->update();
 
         /* Paint the root Widget */
         Application::_paintQueue.push(Application::_rootWidget);
@@ -184,21 +183,6 @@ int Application::exec(int argc, char** argv)
             current->paintEvent(renderer);
             current->paint(Application::_paintQueue);
             Application::_paintQueue.pop();
-        }
-
-        /* Deal all SDL event */
-        while(SDL_PollEvent(&event) > 0)
-        {
-            if(Application::_rootWidget->update(event) == false)
-            {
-                this->update(event);
-            }
-        }
-
-        /* Update workers */
-        for(Worker* worker : Application::_workers)
-        {
-            worker->update();
         }
 
         /* Present */
@@ -217,9 +201,28 @@ int Application::exec(int argc, char** argv)
 }
 
 
-/* Application update */
-bool Application::update(const SDL_Event& event)
+/* Application deal Event */
+bool Application::deal(const Event& event)
 {
+    /* Deal all SDL event */
+
+    /* Pass Event to Workers */
+    for(Worker* worker : Application::_workers)
+    {
+        if(worker->deal(event) == true)
+        {
+            return true;
+        }
+    }
+
+    /* Pass Event to Widgets */
+    if(Application::_rootWidget != nullptr &&
+        Application::_rootWidget->deal(event) == true)
+    {
+        return true;
+    }
+
+
     /* Application mainloop exit */
     if(event.type == SDL_QUIT)
     {
@@ -227,6 +230,22 @@ bool Application::update(const SDL_Event& event)
     }
 
     return false;
+}
+
+/* Application update */
+void Application::update()
+{
+    /* Update Workers */
+    for(Worker* worker : Application::_workers)
+    {
+        worker->update();
+    }
+
+    /* Update Widgets */
+    if(Application::_rootWidget != nullptr)
+    {
+        Application::_rootWidget->update();
+    }
 }
 
 

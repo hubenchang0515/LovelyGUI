@@ -13,12 +13,6 @@
 namespace LovelyGUI
 {
 
-using Point = SDL_Point;
-using Rect = SDL_Rect;
-using Color = SDL_Color;
-using Texture = SDL_Texture;
-using Event = SDL_Event;
-
 enum class BlendMode
 {
     None = SDL_BLENDMODE_NONE,

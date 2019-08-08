@@ -70,17 +70,17 @@ namespace LovelyGUI
         }
     }
 
-    bool Widget::update(const SDL_Event& event)
+    bool Widget::deal(const SDL_Event& event)
     {
-        /* Update son widgets */
+        /* Pass event to son widgets */
         for(Object* son : _sons)
         {
             Widget* widget = dynamic_cast<Widget*>(son);
             if(widget != nullptr)
             {
-                if(widget->update(event) == false)
+                if(widget->deal(event) == false)
                 {
-                    return this->updateEvent(event);
+                    return this->dealEvent(event);
                 }
                 else
                 {
@@ -90,6 +90,22 @@ namespace LovelyGUI
         }
 
         return false;
+    }
+
+    void Widget::update()
+    {
+        /* Update sons */
+        for(Object* son : _sons)
+        {
+            Widget* widget = dynamic_cast<Widget*>(son);
+            if(widget != nullptr)
+            {
+                widget->update();
+            }
+        }
+
+        /* Update self */
+        this->updateEvent();
     }
 
     void Widget::paintEvent(Renderer* renderer)
@@ -105,9 +121,14 @@ namespace LovelyGUI
         renderer->fillRect(rect);
     }
 
-    bool Widget::updateEvent(const Event& event)
+    bool Widget::dealEvent(const Event& event)
     {
         return false;
+    }
+
+    void Widget::updateEvent()
+    {
+
     }
 
 }; // namespace LovelyGUI

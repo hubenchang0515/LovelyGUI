@@ -32,7 +32,8 @@ public:
 
 protected:
     virtual void paintEvent(Renderer* renderer);
-    virtual bool updateEvent(const Event& event);
+    virtual bool dealEvent(const Event& event);
+    virtual void updateEvent();
 
 private:
     int _x;
@@ -41,7 +42,8 @@ private:
     int _height;
 
     virtual void paint(std::queue<Widget*>& paintQueue) final;
-    virtual bool update(const Event& event) final;
+    virtual bool deal(const Event& event) final;
+    virtual void update() final;
 };
 
 }; // namespace LovelyGUI

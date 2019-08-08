@@ -15,7 +15,8 @@ class Worker : public Object
 public:
     Worker(Object* parent=nullptr);
     virtual ~Worker();
-    virtual void update() = 0;
+    virtual void update();
+    virtual bool deal(const Event& event);
 
 
 };

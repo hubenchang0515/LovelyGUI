@@ -45,9 +45,10 @@ private:
     static Widget* _rootWidget;
     static std::queue<Widget*> _paintQueue;
     static std::set<Worker*> _workers;
-
     static bool _running;
-    static bool update(const SDL_Event& event);
+
+    void update();
+    bool deal(const Event& event);
 };
 
 }; // namespace LovelyGUI
