@@ -23,12 +23,12 @@ void pushRandomValue(void *param)
 int main(int argc, char* argv[])
 {
     Application app;
-    Spectrogram* rootWidget = new Spectrogram;
+    Spectrogram* rootWidget = new Spectrogram(&app);
     app.setRootWidget(rootWidget);
-    Timer timer;
-    timer.setCallback(pushRandomValue, static_cast<void*>(rootWidget));
-    timer.setInterval(20);
-    app.addTimer(&timer);
+    Timer* timer = new Timer(&app);
+    timer->setCallback(pushRandomValue, static_cast<void*>(rootWidget));
+    timer->setInterval(20);
+    app.addWorker(timer);
     app.exec();
     return 0;
 }

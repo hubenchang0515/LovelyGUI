@@ -9,7 +9,7 @@ vpath %.cpp ./src
 
 CXXFLAGS = -std=c++11 -I./inc -O3 -W -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -g
 
-TARGET_O = Window.o Renderer.o Application.o Widget.o Object.o Spectrogram.o Timer.o
+TARGET_O = Window.o Renderer.o Application.o Widget.o Object.o Spectrogram.o Timer.o Worker.o
 TARGET = libLovelyGUI.dll
 
 .PHONY : all clean
@@ -18,6 +18,9 @@ all : $(TARGET)
 
 $(TARGET) : $(TARGET_O)
 	gcc -o $(TARGET) $(TARGET_O) $(LDFLAGS)
+
+Object.o : Object.cpp Application.h Widget.h Object.h
+	g++ $(CXXFLAGS) -c ./src/Object.cpp 
 
 Window.o : Window.cpp Window.h
 	g++ $(CXXFLAGS) -c ./src/Window.cpp 
@@ -28,17 +31,18 @@ Renderer.o : Renderer.cpp Renderer.h Window.h
 Application.o : Application.cpp Application.h Widget.h Object.h Window.h Renderer.h
 	g++ $(CXXFLAGS) -c ./src/Application.cpp 
 
+Worker.o : Worker.cpp Worker.h Application.h
+	g++ $(CXXFLAGS) -c ./src/Worker.cpp 
+
+Timer.o : Timer.cpp Timer.h Worker.h
+	g++ $(CXXFLAGS) -c ./src/Timer.cpp 
+
 Widget.o : Widget.cpp Application.h Widget.h Object.h
 	g++ $(CXXFLAGS) -c ./src/Widget.cpp 
-
-Object.o : Object.cpp Application.h Widget.h Object.h
-	g++ $(CXXFLAGS) -c ./src/Object.cpp 
 
 Spectrogram.o : Spectrogram.cpp Spectrogram.h Application.h Widget.h Object.h
 	g++ $(CXXFLAGS) -c ./src/Spectrogram.cpp 
 
-Timer.o : Timer.cpp Timer.h Application.h
-	g++ $(CXXFLAGS) -c ./src/Timer.cpp 
 
 clean :
 	rm -rf $(TARGET_O)

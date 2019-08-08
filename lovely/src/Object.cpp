@@ -1,4 +1,5 @@
 #include "Object.h"
+#include <SDL2/SDL.h>
 
 namespace LovelyGUI
 {
@@ -9,15 +10,20 @@ Object::Object(Object* parent)
     if(parent != nullptr)
     {
         parent->add(this);
+        SDL_Log("%p->add(%p)", parent, this);
     }
 }
 
 Object::~Object()
 {
+    SDL_Log("Object::~Object(%p)", this);
+
     /* delete all son Object */
-    for(Object* son : this->_sons)
+    for(auto son = this->_sons.begin(); son != this->_sons.end();)
     {
-        delete son;
+        auto temp = son;
+        ++son;
+        delete (*temp);
     }
 
     /* Remove self from parent's son Objects list */
