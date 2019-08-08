@@ -17,7 +17,7 @@ class Widget : public Object
 {
     friend class Application;
 public:
-    Widget(Widget* parent=nullptr);
+    Widget(Object* parent=nullptr);
     virtual ~Widget();
 
     virtual int x();

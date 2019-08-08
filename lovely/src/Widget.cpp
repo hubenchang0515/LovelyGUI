@@ -3,7 +3,7 @@
 
 namespace LovelyGUI
 {
-    Widget::Widget(Widget* parent):
+    Widget::Widget(Object* parent):
         Object(parent)
     {
         this->_x = 0;
@@ -14,7 +14,7 @@ namespace LovelyGUI
 
     Widget::~Widget()
     {
-
+        SDL_Log("Widget::~Widget(%p)", this);
     }
 
     int Widget::x()

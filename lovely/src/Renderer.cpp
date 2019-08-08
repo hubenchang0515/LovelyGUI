@@ -4,7 +4,8 @@
 namespace LovelyGUI
 {
 
-Renderer::Renderer(Window* window)
+Renderer::Renderer(Window* window) :
+    Object(window)
 {
     SDL_Window* sdlWindow = window->window();
 
@@ -32,6 +33,8 @@ Renderer::Renderer(Window* window)
 
 Renderer::~Renderer()
 {
+    SDL_Log("Renderer::~Renderer(%p)", this);
+    
     if(this->_mutex != nullptr)
     {
         SDL_UnlockMutex(this->_mutex);

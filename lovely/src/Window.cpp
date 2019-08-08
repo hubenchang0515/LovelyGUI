@@ -3,7 +3,8 @@
 namespace LovelyGUI
 {
 
-Window::Window(int width, int height, const std::string& title)
+Window::Window(int width, int height, const std::string& title, Object* parent) :
+    Object(parent)
 {
     this->_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                     width, height, SDL_WINDOW_SHOWN);
@@ -20,6 +21,8 @@ Window::Window(int width, int height, const std::string& title)
 
 Window::~Window()
 {
+    SDL_Log("Window::~Window(%p)", this);
+
     SDL_DestroyWindow(this->_window);
 }
 

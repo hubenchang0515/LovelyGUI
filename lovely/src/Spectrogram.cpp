@@ -7,7 +7,7 @@
 namespace LovelyGUI
 {
 
-Spectrogram::Spectrogram(Widget* parent) :
+Spectrogram::Spectrogram(Object* parent) :
     Widget(parent)
 {
     this->_texture = Application::renderer()->createTexture(this->width(), this->height());
@@ -20,6 +20,8 @@ Spectrogram::Spectrogram(Widget* parent) :
 
 Spectrogram::~Spectrogram()
 {
+    SDL_Log("Spectrogram::~Spectrogram(%p)", this);
+
     SDL_DestroyTexture(this->_texture);
 }
 

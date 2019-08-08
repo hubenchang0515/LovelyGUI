@@ -12,7 +12,7 @@ namespace LovelyGUI
 class Spectrogram : public Widget
 {
 public:
-    Spectrogram(Widget* parent=nullptr);
+    Spectrogram(Object* parent=nullptr);
     virtual ~Spectrogram();
 
     virtual void setWidth(int width);

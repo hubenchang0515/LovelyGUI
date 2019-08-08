@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Window.h"
+#include "Object.h"
 
 namespace LovelyGUI
 {
@@ -26,7 +27,7 @@ enum class BlendMode
     Mod = SDL_BLENDMODE_MOD,
 };
 
-class Renderer
+class Renderer : public Object
 {
 public:
     Renderer(Window* _window);

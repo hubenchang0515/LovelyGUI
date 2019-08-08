@@ -8,13 +8,15 @@
 #include <string>
 #include <stdexcept>
 
+#include "Object.h"
+
 namespace LovelyGUI
 {
 
-class Window
+class Window : public Object
 {
 public:
-    Window(int width=640, int height=400, const std::string& title="LovelyGUI Application");
+    Window(int width, int height, const std::string& title, Object* parent=nullptr);
     ~Window();
 
     /* Read */
