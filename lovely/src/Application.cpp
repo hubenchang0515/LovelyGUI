@@ -14,11 +14,12 @@ Renderer* Application::_renderer = nullptr;
 Widget* Application::_rootWidget = nullptr;
 bool Application::_running = false;
 std::queue<Widget*> Application::_paintQueue;
-std::set<Timer*> Application::_timers;
+std::set<Worker*> Application::_workers;
 
 
 /* Constructor */
-Application::Application(int width, int height, const std::string& title)
+Application::Application(int width, int height, const std::string& title) :
+    Object(nullptr)
 {
     /* Singleton Pattern Check */
     if(Application::_app != nullptr)
@@ -56,7 +57,7 @@ Application::Application(int width, int height, const std::string& title)
     /* Create Window */
     try
     {
-        Application::_window = new Window(width, height, title);
+        Application::_window = new Window(width, height, title, this);
     }
     catch(const std::exception& e)
     {
@@ -89,8 +90,7 @@ Application::Application(int width, int height, const std::string& title)
 /* Distructor */
 Application::~Application()
 {
-    delete Application::_renderer;
-    delete Application::_window;
+    SDL_Log("Application::~Application(%p)", this);
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
@@ -133,16 +133,16 @@ void Application::setRootWidget(Widget* widget)
 
 
 /* Add timer */
-void Application::addTimer(Timer* timer)
+void Application::addWorker(Worker* worker)
 {
-    Application::_timers.insert(timer);
+    Application::_workers.insert(worker);
 }
 
 
 /* Remove timer */
-void Application::removeTimer(Timer* timer)
+void Application::removeWorker(Worker* worker)
 {
-    Application::_timers.erase(timer);
+    Application::_workers.erase(worker);
 }
 
 /* Application main loop */
@@ -195,10 +195,10 @@ int Application::exec(int argc, char** argv)
             }
         }
 
-        /* Update timers */
-        for(Timer* timer : Application::_timers)
+        /* Update workers */
+        for(Worker* worker : Application::_workers)
         {
-            timer->update();
+            worker->update();
         }
 
         /* Present */

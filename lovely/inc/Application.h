@@ -15,9 +15,9 @@ namespace LovelyGUI
 {
 
 class Widget;
-class Timer;
+class Worker;
 
-class Application
+class Application : public Object
 {
 public:
     Application(int width=640, int height=400, const std::string& title="LovelyGUI Application");
@@ -35,8 +35,8 @@ public:
 
     /* Write */
     static void setRootWidget(Widget* widget);
-    static void addTimer(Timer* timer);
-    static void removeTimer(Timer* timer);
+    static void addWorker(Worker* worker);
+    static void removeWorker(Worker* worker);
 
 private:
     static Application* _app;
@@ -44,7 +44,7 @@ private:
     static Renderer* _renderer;
     static Widget* _rootWidget;
     static std::queue<Widget*> _paintQueue;
-    static std::set<Timer*> _timers;
+    static std::set<Worker*> _workers;
 
     static bool _running;
     static bool update(const SDL_Event& event);

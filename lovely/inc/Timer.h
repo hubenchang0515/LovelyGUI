@@ -8,6 +8,8 @@
 #include <vector>
 #include <functional>
 
+#include "Worker.h"
+
 #if __cplusplus > 201703L
     #include <any>
 #endif
@@ -15,10 +17,10 @@
 namespace LovelyGUI
 {
 
-class Timer
+class Timer : public Worker
 {
 public:
-    Timer();
+    Timer(Object* parent=nullptr);
     ~Timer();
     void update();
     void setInterval(Uint32 ms);

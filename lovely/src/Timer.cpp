@@ -1,11 +1,11 @@
-#include "Application.h"
 #include "Timer.h"
 #include <SDL2/SDL.h>
 
 namespace LovelyGUI
 {
 
-Timer::Timer()
+Timer::Timer(Object* parent) :
+    Worker(parent)
 {
 
 }
@@ -13,7 +13,7 @@ Timer::Timer()
 
 Timer::~Timer()
 {
-    Application::removeTimer(this);
+    SDL_Log("Timer::~Timer(%p)", this);
 }
 
 
@@ -21,7 +21,7 @@ Timer::~Timer()
 void Timer::update()
 {
     Uint32 now = SDL_GetTicks();
-    if((now - this->_previous) > this->_interval)
+    if(this->_callback != nullptr && (now - this->_previous) > this->_interval)
     {
         this->_callback(this->_param);
         this->_previous = now;
