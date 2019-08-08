@@ -56,7 +56,7 @@ public:
     int drawRects(const std::vector<Rect>& rects);
     int fillRect(const Rect& rect);
     int fillRects(const std::vector<Rect>& rects);
-    int copy(Texture* source, const Rect* dstRect, const Rect* srcRect);
+    int copy(Texture* source, const Rect* srcRect, const Rect* dstRect);
 
 private:
     SDL_Renderer* _renderer;

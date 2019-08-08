@@ -34,7 +34,7 @@ Renderer::Renderer(Window* window) :
 Renderer::~Renderer()
 {
     SDL_Log("Renderer::~Renderer(%p)", this);
-    
+
     if(this->_mutex != nullptr)
     {
         SDL_UnlockMutex(this->_mutex);
@@ -173,9 +173,9 @@ int Renderer::fillRects(const std::vector<Rect>& rects)
     return SDL_RenderFillRects(this->_renderer, rects.data(), rects.size());
 }
 
-int Renderer::copy(Texture* source, const Rect* dstRect, const Rect* srcRect)
+int Renderer::copy(Texture* source, const Rect* srcRect, const Rect* dstRect)
 {
-    return SDL_RenderCopy(this->_renderer, source, dstRect, srcRect);
+    return SDL_RenderCopy(this->_renderer, source, srcRect, dstRect);
 }
 
 }; // namespace LovelyGUI

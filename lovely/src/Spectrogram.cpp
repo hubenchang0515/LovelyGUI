@@ -10,12 +10,7 @@ namespace LovelyGUI
 Spectrogram::Spectrogram(Object* parent) :
     Widget(parent)
 {
-    this->_texture = Application::renderer()->createTexture(this->width(), this->height());
-    if(this->_texture == nullptr)
-    {
-        SDL_Log("%s", SDL_GetError());
-        throw std::runtime_error("Spectrogram Error");
-    }
+    this->adjustTexture();
 }
 
 Spectrogram::~Spectrogram()
@@ -28,25 +23,13 @@ Spectrogram::~Spectrogram()
 void Spectrogram::setWidth(int width)
 {
     Widget::setWidth(width);
-    Application::renderer()->destroyTexture(this->_texture);
-    this->_texture = Application::renderer()->createTexture(this->width(), this->height());
-    if(this->_texture == nullptr)
-    {
-        SDL_Log("%s", SDL_GetError());
-        throw std::runtime_error("Spectrogram Error");
-    }
+    this->adjustTexture();
 }
 
 void Spectrogram::setHeight(int height)
 {
     Widget::setHeight(height);
-    Application::renderer()->destroyTexture(this->_texture);
-    this->_texture = Application::renderer()->createTexture(this->width(), this->height());
-    if(this->_texture == nullptr)
-    {
-        SDL_Log("%s", SDL_GetError());
-        throw std::runtime_error("Spectrogram Error");
-    }
+    this->adjustTexture();
 }
 
 void Spectrogram::pushLine(const std::vector<Color>& line)
@@ -71,13 +54,35 @@ void Spectrogram::pushLine(const std::vector<Color>& line)
         Application::renderer()->setColor(line[i]);
         Application::renderer()->drawPoint(i, this->height() - 1);
     }
+    Application::renderer()->setTarget(nullptr);
 }
 
 
 void Spectrogram::paintEvent(Renderer* renderer)
 {
     Application::renderer()->setTarget(nullptr);
-    Application::renderer()->copy(this->_texture, nullptr, nullptr);
+    Rect screen = {this->x(), this->y(), this->width(), this->height()};
+    Application::renderer()->copy(this->_texture, nullptr, &screen);
+}
+
+void Spectrogram::adjustTexture()
+{
+    if(this->_texture == nullptr)
+    {
+        Application::renderer()->destroyTexture(this->_texture);
+    }
+
+    if(this->width() == 0 || this->height() == 0)
+    {
+        return;
+    }
+
+    this->_texture = Application::renderer()->createTexture(this->width(), this->height());
+    if(this->_texture == nullptr)
+    {
+        SDL_Log("%s", SDL_GetError());
+        throw std::runtime_error("Spectrogram Error");
+    }
 }
 
 }; // namespace LovelyGUI

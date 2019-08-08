@@ -111,14 +111,15 @@ namespace LovelyGUI
     void Widget::paintEvent(Renderer* renderer)
     {
         static Rect rect;
-        rect.x = this->_x;
-        rect.y = this->_y;
-        rect.w = this->_width;
-        rect.h = this->_height;
+        rect.x = this->x();
+        rect.y = this->y();
+        rect.w = this->width();
+        rect.h = this->height();
+        renderer->setTarget(nullptr);
         renderer->setColor(255, 105, 180);
         renderer->fillRect(rect);
         renderer->setColor(255, 255, 255);
-        renderer->fillRect(rect);
+        renderer->drawRect(rect);
     }
 
     bool Widget::dealEvent(const Event& event)

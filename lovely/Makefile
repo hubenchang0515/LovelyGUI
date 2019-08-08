@@ -9,7 +9,7 @@ vpath %.cpp ./src
 
 CXXFLAGS = -std=c++11 -I./inc -O3 -W -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -g
 
-TARGET_O = Window.o Renderer.o Application.o Widget.o Object.o Spectrogram.o Timer.o Worker.o
+TARGET_O = Window.o Renderer.o Application.o Widget.o Object.o Spectrogram.o Timer.o Worker.o LinearLayout.o
 TARGET = libLovelyGUI.dll
 
 .PHONY : all clean
@@ -42,6 +42,9 @@ Widget.o : Widget.cpp Application.h Widget.h Object.h
 
 Spectrogram.o : Spectrogram.cpp Spectrogram.h Application.h Widget.h Object.h
 	g++ $(CXXFLAGS) -c ./src/Spectrogram.cpp 
+
+LinearLayout.o : LinearLayout.cpp LinearLayout.h Application.h Widget.h Object.h
+	g++ $(CXXFLAGS) -c ./src/LinearLayout.cpp 
 
 
 clean :

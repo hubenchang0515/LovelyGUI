@@ -22,7 +22,8 @@ class Timer : public Worker
 public:
     Timer(Object* parent=nullptr);
     ~Timer();
-    void update();
+    virtual void update() override;
+
     void setInterval(Uint32 ms);
 
     #if __cplusplus > 201703L

@@ -7,6 +7,7 @@
 #include <queue>
 
 #include "Object.h"
+#include "Renderer.h"
 
 namespace LovelyGUI
 {

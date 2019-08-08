@@ -15,8 +15,8 @@ public:
     Spectrogram(Object* parent=nullptr);
     virtual ~Spectrogram();
 
-    virtual void setWidth(int width);
-    virtual void setHeight(int height);
+    virtual void setWidth(int width) override;
+    virtual void setHeight(int height) override;
 
     virtual void pushLine(const std::vector<SDL_Color>& line);
 
@@ -25,6 +25,7 @@ protected:
 
 private:
     SDL_Texture* _texture;
+    void adjustTexture();
 };
 
 }; // namespace LovelyGUI
