@@ -31,6 +31,16 @@ public:
     virtual void setWidth(int width);
     virtual void setHeight(int height);
 
+    virtual Color frontColor();
+    virtual void setFrontColor(Color color);
+    virtual void setFrontColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+    virtual void setFrontColor(Uint8 r, Uint8 g, Uint8 b);
+
+    virtual Color backColor();
+    virtual void setBackColor(Color color);
+    virtual void setBackColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+    virtual void setBackColor(Uint8 r, Uint8 g, Uint8 b);
+
 protected:
     virtual void paintEvent(Renderer* renderer);
     virtual bool dealEvent(const Event& event);
@@ -41,6 +51,9 @@ private:
     int _y;
     int _width;
     int _height;
+    
+    Color _frontColor;
+    Color _backColor;
 
     virtual void paint(std::queue<Widget*>& paintQueue) final;
     virtual bool deal(const Event& event) final;

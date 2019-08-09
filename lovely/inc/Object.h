@@ -13,7 +13,7 @@ namespace LovelyGUI
 using Point = SDL_Point;
 using Rect = SDL_Rect;
 using Color = SDL_Color;
-using Texture = SDL_Texture;
+using Surface = SDL_Surface;
 using Event = SDL_Event;
 
 class Object

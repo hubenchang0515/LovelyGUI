@@ -54,13 +54,13 @@ void Spectrogram::pushLine(const std::vector<Color>& line)
         Application::renderer()->setColor(line[i]);
         Application::renderer()->drawPoint(i, this->height() - 1);
     }
-    Application::renderer()->setTarget(nullptr);
+    Application::renderer()->setTarget(Texture::DefaultTarget);
 }
 
 
 void Spectrogram::paintEvent(Renderer* renderer)
 {
-    Application::renderer()->setTarget(nullptr);
+    Application::renderer()->setTarget(Texture::DefaultTarget);
     Rect screen = {this->x(), this->y(), this->width(), this->height()};
     Application::renderer()->copy(this->_texture, nullptr, &screen);
 }

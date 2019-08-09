@@ -2,6 +2,7 @@
 #include "LinearLayout.h"
 #include "Spectrogram.h"
 #include "Timer.h"
+#include "Label.h"
 #include <stdexcept>
 #include <vector>
 
@@ -36,6 +37,8 @@ void pushRandomValue(void *param)
 int main(int argc, char* argv[])
 {
     Application app;
+
+    app.setDefaultFont("SourceHanSansCN-Normal.otf");
     LinearLayout* root = new LinearLayout(&app);
     root->setDirection(LinearLayout::Direction::Vertical);
     app.setRootWidget(root);
@@ -47,15 +50,19 @@ int main(int argc, char* argv[])
 
 
     Spectrogram* spec1 =  new Spectrogram(line1);
-    Widget* widget1 = new Widget(line1);
+    Label* label1 = new Label(line1);
+    label1->setText(u8"傻gay晨");
+    label1->setFrontColor(Color({0, 0xff, 0, 0xff}));
+    label1->setBackColor(0xff, 0, 0);
     line1->addWidget(spec1);
-    line1->addWidget(widget1,2);
+    line1->addWidget(label1,2);
 
     Spectrogram* spec2 =  new Spectrogram(line2);
-    Widget* widget2 = new Widget(line2);
-    line2->addWidget(widget2,2);
+    Label* label2 = new Label(line2);
+    label2->setText(u8"薯条一点也不萌");
+    line2->addWidget(label2,2);
     line2->addWidget(spec2);
-    line2->setProportion(1, 2);
+    line2->setProportion(1, 2); 
     
 
     std::vector<Spectrogram*> specs;

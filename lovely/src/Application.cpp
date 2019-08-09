@@ -12,6 +12,7 @@ Application* Application::_app = nullptr;
 Window* Application::_window = nullptr;
 Renderer* Application::_renderer = nullptr;
 Widget* Application::_rootWidget = nullptr;
+Font* Application::_font = nullptr;
 bool Application::_running = false;
 std::queue<Widget*> Application::_paintQueue;
 std::set<Worker*> Application::_workers;
@@ -115,6 +116,12 @@ Renderer* Application::renderer()
     return Application::_renderer;
 }
 
+/* Get font */
+Font* Application::font()
+{
+    return Application::_font;
+}
+
 /* Get root widget */
 Widget* Application::rootWidget()
 {
@@ -145,6 +152,13 @@ void Application::removeWorker(Worker* worker)
     Application::_workers.erase(worker);
 }
 
+/* Setting default font file */
+bool Application::setDefaultFont(const std::string& file, int size)
+{
+    Application::_font = new Font(Application::app());
+    return Application::_font->open(file, size);
+}
+
 /* Application main loop */
 int Application::exec(int argc, char** argv)
 {
@@ -162,7 +176,7 @@ int Application::exec(int argc, char** argv)
     while(Application::_running)
     {
         /* Clear */
-        renderer->setTarget(nullptr);
+        renderer->setTarget(Texture::DefaultTarget);
         renderer->setColor(0xff, 0xff, 0xff);
         renderer->clear();
 
@@ -186,7 +200,7 @@ int Application::exec(int argc, char** argv)
         }
 
         /* Present */
-        renderer->setTarget(nullptr);
+        renderer->setTarget(Texture::DefaultTarget);
         renderer->present();
 
         /* Release CPU */
@@ -207,6 +221,7 @@ bool Application::deal(const Event& event)
     /* Deal all SDL event */
 
     /* Pass Event to Workers */
+    SDL_Log("Pass Event to Workers");
     for(Worker* worker : Application::_workers)
     {
         if(worker->deal(event) == true)
@@ -216,6 +231,7 @@ bool Application::deal(const Event& event)
     }
 
     /* Pass Event to Widgets */
+    SDL_Log("Pass Event to Widgets");
     if(Application::_rootWidget != nullptr &&
         Application::_rootWidget->deal(event) == true)
     {

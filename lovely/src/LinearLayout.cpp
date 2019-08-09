@@ -14,7 +14,7 @@ namespace LovelyGUI
 
     LinearLayout::~LinearLayout()
     {
-
+        SDL_Log("LinearLayout::~LinearLayout(%p)", this);
     }
 
     void LinearLayout::setWidth(int width)

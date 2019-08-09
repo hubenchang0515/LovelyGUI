@@ -10,6 +10,7 @@
 
 #include "Window.h"
 #include "Renderer.h"
+#include "Font.h"
 
 namespace LovelyGUI
 {
@@ -29,6 +30,7 @@ public:
     static Application* app();
     static Window* window();
     static Renderer* renderer();
+    static Font* font();
 
     /* Read */
     static Widget* rootWidget();
@@ -37,12 +39,14 @@ public:
     static void setRootWidget(Widget* widget);
     static void addWorker(Worker* worker);
     static void removeWorker(Worker* worker);
+    static bool setDefaultFont(const std::string& file, int size=0);
 
 private:
     static Application* _app;
     static Window* _window;
     static Renderer* _renderer;
     static Widget* _rootWidget;
+    static Font* _font;
     static std::queue<Widget*> _paintQueue;
     static std::set<Worker*> _workers;
     static bool _running;

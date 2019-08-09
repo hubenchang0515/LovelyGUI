@@ -62,20 +62,26 @@ int Renderer::tryLock()
 }
 
 
-Texture* Renderer::createTexture(Uint32 width, Uint32 height)
+Texture Renderer::createTexture(Uint32 width, Uint32 height)
 {
     return SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, 
                                 SDL_TEXTUREACCESS_TARGET, width, height);
 }
 
 
-void Renderer::destroyTexture(Texture* texture)
+Texture Renderer::createTextureFromSurface(Surface* surface)
+{
+    return SDL_CreateTextureFromSurface(this->_renderer, surface);
+}
+
+
+void Renderer::destroyTexture(const Texture& texture)
 {
     SDL_DestroyTexture(texture);
 }
 
 
-int Renderer::setTarget(Texture* texture)
+int Renderer::setTarget(const Texture& texture)
 {
     return SDL_SetRenderTarget(this->_renderer, texture);
 }
@@ -173,7 +179,7 @@ int Renderer::fillRects(const std::vector<Rect>& rects)
     return SDL_RenderFillRects(this->_renderer, rects.data(), rects.size());
 }
 
-int Renderer::copy(Texture* source, const Rect* srcRect, const Rect* dstRect)
+int Renderer::copy(const Texture& source, const Rect* srcRect, const Rect* dstRect)
 {
     return SDL_RenderCopy(this->_renderer, source, srcRect, dstRect);
 }

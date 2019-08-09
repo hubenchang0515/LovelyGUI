@@ -9,6 +9,7 @@
 
 #include "Window.h"
 #include "Object.h"
+#include "Texture.h"
 
 namespace LovelyGUI
 {
@@ -33,11 +34,12 @@ public:
     int tryLock();
 
     /* Texture */
-    Texture* createTexture(Uint32 width, Uint32 height);
-    void destroyTexture(Texture* texture);
+    Texture createTexture(Uint32 width, Uint32 height);
+    Texture createTextureFromSurface(Surface* surface);
+    void destroyTexture(const Texture& texture);
 
     /* Setting */
-    int setTarget(Texture* texture=nullptr);
+    int setTarget(const Texture& texture=Texture::DefaultTarget);
     int setBlendMode(BlendMode mode=BlendMode::None);
     int setColor(Uint8 r, Uint8 g, Uint8 b);
     int setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
@@ -56,7 +58,7 @@ public:
     int drawRects(const std::vector<Rect>& rects);
     int fillRect(const Rect& rect);
     int fillRects(const std::vector<Rect>& rects);
-    int copy(Texture* source, const Rect* srcRect, const Rect* dstRect);
+    int copy(const Texture& source, const Rect* srcRect, const Rect* dstRect);
 
 private:
     SDL_Renderer* _renderer;

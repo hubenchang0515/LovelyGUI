@@ -4,6 +4,7 @@
 
 #include "Application.h"
 #include "Widget.h"
+#include "Texture.h"
 
 namespace LovelyGUI
 {
@@ -24,7 +25,7 @@ protected:
     virtual void paintEvent(Renderer* renderer) override;
 
 private:
-    SDL_Texture* _texture;
+    Texture _texture;
     void adjustTexture();
 };
 
