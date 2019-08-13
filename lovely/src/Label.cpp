@@ -64,10 +64,8 @@ bool Label::dealEvent(const Event& event)
     if(event.type != SDL_USEREVENT)
         return false;
 
-    SDL_Log("code %d data1 %p", event.user.code, event.user.data1);
     if(event.user.code == 123 && event.user.data1 == this)
     {
-        SDL_Log("change color");
         return this->render();
     }
 

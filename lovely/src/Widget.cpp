@@ -8,15 +8,26 @@ Widget::Widget(Object* parent):
 {
     this->_x = 0;
     this->_y = 0;
+    this->_z = 0;
     this->_width = 80;
     this->_height = 20;
+    this->_visiable = true;
     this->_backColor = {0xf0, 0xf0, 0xf0, 0xff};
     this->_frontColor = {0, 0, 0, 0};
+
+    Widget* widget = dynamic_cast<Widget*>(parent);
+    if(widget != nullptr)
+    {
+        this->_z = widget->_z + 1;
+    }
+
+    Application::addWidget(this);
 }
 
 Widget::~Widget()
 {
     SDL_Log("Widget::~Widget(%p)", this);
+    Application::removeWidget(this);
 }
 
 int Widget::x()
@@ -29,6 +40,11 @@ int Widget::y()
     return this->_y;
 }
 
+int Widget::z()
+{
+    return this->_y;
+}
+
 void Widget::setX(int x)
 {
     this->_x = x;
@@ -37,6 +53,11 @@ void Widget::setX(int x)
 void Widget::setY(int y)
 {
     this->_y = y;
+}
+
+void Widget::setZ(int z)
+{
+    this->_z = z;
 }
 
 int Widget::width()
@@ -59,17 +80,13 @@ void Widget::setHeight(int height)
     this->_height = height;
 }
 
-void Widget::paint(std::queue<Widget*>& paintQueue)
+bool Widget::visiable()
 {
-    /* Push son widgets into queue back */
-    for(Object* son : _sons)
-    {
-        Widget* widget = dynamic_cast<Widget*>(son);
-        if(widget != nullptr)
-        {
-            paintQueue.push(widget);
-        }
-    }
+    return this->_visiable;
+}
+void Widget::setVisiable(bool visiable)
+{
+    this->_visiable = visiable;
 }
 
 Color Widget::frontColor()
@@ -87,7 +104,6 @@ void Widget::setFrontColor(Color color)
     event.user.code = 123;
     event.user.data1 = this;
     SDL_PushEvent(&event);
-    SDL_Log("*****Push Event*****");
 }
 
 
@@ -112,13 +128,12 @@ void Widget::setBackColor(Color color)
 {
     this->_backColor = color;
 
-    /* Push an Event */
+    //  TODO: code Event system 
     SDL_Event event;
     event.user.type = SDL_USEREVENT;
     event.user.code = 123;
     event.user.data1 = this;
     SDL_PushEvent(&event);
-    SDL_Log("*****Push Event*****");
 }
 void Widget::setBackColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
@@ -130,38 +145,18 @@ void Widget::setBackColor(Uint8 r, Uint8 g, Uint8 b)
     this->setBackColor({r, g, b, 0});
 }
 
+void Widget::paint(Renderer* renderer)
+{
+    this->paintEvent(renderer);
+}
+
 bool Widget::deal(const SDL_Event& event)
 {
-    /* Pass event to son widgets */
-    for(Object* son : _sons)
-    {
-        Widget* widget = dynamic_cast<Widget*>(son);
-        if(widget != nullptr)
-        {
-            SDL_Log("Pass Event to %p", widget);
-            if(widget->deal(event) == true)
-            {
-                return true;
-            }
-        }
-    }
-
-    this->dealEvent(event);
-    return false;
+    return this->dealEvent(event);
 }
 
 void Widget::update()
 {
-    /* Update sons */
-    for(Object* son : _sons)
-    {
-        Widget* widget = dynamic_cast<Widget*>(son);
-        if(widget != nullptr)
-        {
-            widget->update();
-        }
-    }
-
     /* Update self */
     this->updateEvent();
 }

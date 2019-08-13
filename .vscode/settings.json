@@ -37,6 +37,7 @@
         "numeric": "cpp",
         "cstdarg": "cpp",
         "algorithm": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "string": "cpp"
     }
 }

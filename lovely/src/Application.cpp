@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <algorithm>
 
 #include "Application.h"
 #include "Widget.h"
@@ -14,8 +15,8 @@ Renderer* Application::_renderer = nullptr;
 Widget* Application::_rootWidget = nullptr;
 Font* Application::_font = nullptr;
 bool Application::_running = false;
-std::queue<Widget*> Application::_paintQueue;
 std::set<Worker*> Application::_workers;
+std::vector<Widget*> Application::_widgets;
 
 
 /* Constructor */
@@ -159,6 +160,55 @@ bool Application::setDefaultFont(const std::string& file, int size)
     return Application::_font->open(file, size);
 }
 
+/* Add widget to paint */
+bool Application::addWidget(Widget* widget)
+{
+    /* Find the first element while element->z < widget->z or element == widget */
+    std::vector<Widget*>::iterator index = std::find_if(Application::_widgets.begin(),
+                                                        Application::_widgets.end(),
+                                                        [&widget](Widget* element) -> bool
+                                                        {
+                                                            return widget->_z < element->_z || widget == element;
+                                                        });
+
+    /* Add widget into Application Widgets List */
+    if(index == Application::_widgets.end() || *index != widget)
+    {
+        Application::_widgets.insert(index, widget);
+    }
+    else //  widget == *index
+    {
+        SDL_Log("Re-Add widget(%p) into Application Widgets List.", widget);
+        return false;
+    }
+
+    return true;
+}
+
+
+/* Remove widget to not paint */
+bool Application::removeWidget(Widget* widget)
+{
+    /* Find the first element while element == widget */
+    std::vector<Widget*>::iterator index = std::find_if(Application::_widgets.begin(),
+                                                        Application::_widgets.end(),
+                                                        [&widget](Widget* element) -> bool
+                                                        {
+                                                            return widget == element;
+                                                        });
+    if(index != Application::_widgets.end())
+    {
+        Application::_widgets.erase(index);
+    }
+    else
+    {
+        SDL_Log("Remove invalid widget(%p) from Application Widgets List.", widget);
+        return false;
+    }
+
+    return true;
+}
+
 /* Application main loop */
 int Application::exec(int argc, char** argv)
 {
@@ -166,20 +216,9 @@ int Application::exec(int argc, char** argv)
     Application::_running = true;
     Uint32 ticks = SDL_GetTicks();
     const Uint32 deltaTicks = 1000/60;
-    Renderer* renderer = Application::_renderer;
-    if(renderer == nullptr)
-    {
-        SDL_Log("Renderer is nullptr");
-        return 1;
-    }
 
     while(Application::_running)
     {
-        /* Clear */
-        renderer->setTarget(Texture::DefaultTarget);
-        renderer->setColor(0xff, 0xff, 0xff);
-        renderer->clear();
-
         /* Deal Events */
         while(SDL_PollEvent(&event) > 0)
         {
@@ -189,19 +228,9 @@ int Application::exec(int argc, char** argv)
         /* Update */
         this->update();
 
-        /* Paint the root Widget */
-        Application::_paintQueue.push(Application::_rootWidget);
-        while(Application::_paintQueue.empty() == false)
-        {
-            Widget* current = Application::_paintQueue.front();
-            current->paintEvent(renderer);
-            current->paint(Application::_paintQueue);
-            Application::_paintQueue.pop();
-        }
-
-        /* Present */
-        renderer->setTarget(Texture::DefaultTarget);
-        renderer->present();
+        /* Paint the Widgets */
+        this->paint();
+        
 
         /* Release CPU */
         if(SDL_GetTicks() - ticks < deltaTicks)
@@ -221,7 +250,6 @@ bool Application::deal(const Event& event)
     /* Deal all SDL event */
 
     /* Pass Event to Workers */
-    SDL_Log("Pass Event to Workers");
     for(Worker* worker : Application::_workers)
     {
         if(worker->deal(event) == true)
@@ -231,11 +259,12 @@ bool Application::deal(const Event& event)
     }
 
     /* Pass Event to Widgets */
-    SDL_Log("Pass Event to Widgets");
-    if(Application::_rootWidget != nullptr &&
-        Application::_rootWidget->deal(event) == true)
+    for(Widget* widget : this->_widgets)
     {
-        return true;
+        if(widget->deal(event) == true)
+        {
+            return true;
+        }
     }
 
 
@@ -248,6 +277,35 @@ bool Application::deal(const Event& event)
     return false;
 }
 
+/* Application paint */
+void Application::paint()
+{
+    Renderer* renderer = Application::_renderer;
+    if(renderer == nullptr)
+    {
+        SDL_Log("Renderer is nullptr");
+        throw std::runtime_error("Renderer is nullptr");
+    }
+
+    /* Clear */
+    renderer->setTarget(Texture::DefaultTarget);
+    renderer->setColor(0xff, 0xff, 0xff);
+    renderer->clear();
+
+    /* Paint widgets */
+    for(Widget* widget : this->_widgets)
+    {
+        if(widget->_visiable)
+        {
+            widget->paint(renderer);
+        }
+    }
+
+    /* Present */
+    renderer->setTarget(Texture::DefaultTarget);
+    renderer->present();
+}
+
 /* Application update */
 void Application::update()
 {
@@ -258,9 +316,9 @@ void Application::update()
     }
 
     /* Update Widgets */
-    if(Application::_rootWidget != nullptr)
+    for(Widget* widget : this->_widgets)
     {
-        Application::_rootWidget->update();
+        widget->update();
     }
 }
 

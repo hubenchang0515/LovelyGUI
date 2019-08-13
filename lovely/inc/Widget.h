@@ -23,13 +23,18 @@ public:
 
     virtual int x();
     virtual int y();
+    virtual int z();
     virtual void setX(int x);
     virtual void setY(int y);
+    virtual void setZ(int z);
 
     virtual int width();
     virtual int height();
     virtual void setWidth(int width);
     virtual void setHeight(int height);
+
+    virtual bool visiable();
+    virtual void setVisiable(bool visiable=true);
 
     virtual Color frontColor();
     virtual void setFrontColor(Color color);
@@ -49,13 +54,16 @@ protected:
 private:
     int _x;
     int _y;
+    int _z;
     int _width;
     int _height;
+
+    bool _visiable;
     
     Color _frontColor;
     Color _backColor;
 
-    virtual void paint(std::queue<Widget*>& paintQueue) final;
+    virtual void paint(Renderer* renderer) final;
     virtual bool deal(const Event& event) final;
     virtual void update() final;
 };

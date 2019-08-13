@@ -41,16 +41,21 @@ public:
     static void removeWorker(Worker* worker);
     static bool setDefaultFont(const std::string& file, int size=0);
 
+    /* Add and remove widgets to paint and key sorted */
+    static bool addWidget(Widget* widget);
+    static bool removeWidget(Widget* widget);
+
 private:
     static Application* _app;
     static Window* _window;
     static Renderer* _renderer;
     static Widget* _rootWidget;
     static Font* _font;
-    static std::queue<Widget*> _paintQueue;
-    static std::set<Worker*> _workers;
     static bool _running;
+    static std::set<Worker*> _workers;
+    static std::vector<Widget*> _widgets;
 
+    void paint();
     void update();
     bool deal(const Event& event);
 };
